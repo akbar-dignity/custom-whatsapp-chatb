@@ -1,17 +1,65 @@
 {
   "menu": {
     "type": "buttons",
-    "text": "Welcome! Choose an option:",
+    "text": "Welcome to The All Dignity Engineering & Trading LLC! Please choose a category:",
     "buttons": [
-      { "id": "btn_products", "title": "🛒 Products" },
-      { "id": "btn_support", "title": "🛠 Support" },
-      { "id": "btn_contact", "title": "📞 Contact" }
+      {"id":"cat_electrical","title":"⚡ Electrical"},
+      {"id":"cat_mechanical","title":"⚙ Mechanical"},
+      {"id":"cat_electronic","title":"💻 Electronic"},
+      {"id":"cat_automation","title":"🤖 Automation"},
+      {"id":"btn_contact","title":"📞 Contact"}
     ]
   },
-  "hi": { "text": "Hello! Welcome to Dignity Shop!" },
+  "categories": {
+    "cat_electrical": {
+      "type": "buttons",
+      "text": "Electrical Products:",
+      "buttons": [
+        {"id":"prod_circuit","title":"Circuit Breaker"},
+        {"id":"prod_switch","title":"Switch"},
+        {"id":"btn_menu","title":"⬅ Back to Menu"}
+      ]
+    },
+    "cat_mechanical": {
+      "type": "buttons",
+      "text": "Mechanical Products:",
+      "buttons": [
+        {"id":"prod_bearing","title":"Bearing"},
+        {"id":"prod_motor","title":"Motor"},
+        {"id":"btn_menu","title":"⬅ Back to Menu"}
+      ]
+    },
+    "cat_electronic": {
+      "type": "buttons",
+      "text": "Electronic Products:",
+      "buttons": [
+        {"id":"prod_resistor","title":"Resistor"},
+        {"id":"prod_ic","title":"IC"},
+        {"id":"btn_menu","title":"⬅ Back to Menu"}
+      ]
+    },
+    "cat_automation": {
+      "type": "buttons",
+      "text": "Automation Products:",
+      "buttons": [
+        {"id":"prod_sensor","title":"Sensor"},
+        {"id":"prod_plc","title":"PLC"},
+        {"id":"btn_menu","title":"⬅ Back to Menu"}
+      ]
+    }
+  },
+  "products": {
+    "prod_circuit": "Circuit Breaker: 10A, 220V. Price: OMR 3. Contact us to order.",
+    "prod_switch": "Industrial Switch: Single Pole, 5A. Price: OMR 1.5.",
+    "prod_bearing": "Ball Bearing 6205: Standard Size, Steel. Price: OMR 2.5.",
+    "prod_motor": "AC Motor 1HP, 3 Phase. Price: OMR 120.",
+    "prod_resistor": "Resistor 220 Ohm 1W. Price: OMR 0.1 each.",
+    "prod_ic": "IC 555 Timer, DIP-8. Price: OMR 0.5.",
+    "prod_sensor": "Proximity Sensor PNP, 12V. Price: OMR 10.",
+    "prod_plc": "PLC Controller Siemens S7-1200. Price: OMR 350."
+  },
   "buttons": {
-    "btn_products": "Here are our products: Product A, Product B, Product C",
-    "btn_support": "Support options: FAQ, Live Chat, Email",
-    "btn_contact": "Contact us at: +968 12345678"
+    "btn_menu": "menu",
+    "btn_contact": "📞 Contact us at +968 24592344 / 66 or email admin@dignityengineering.com"
   }
 }
