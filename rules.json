@@ -5,9 +5,16 @@
     "buttons": [
       {"id":"cat_electrical","title":"⚡ Electrical"},
       {"id":"cat_mechanical","title":"⚙ Mechanical"},
-      {"id":"cat_electronic","title":"💻 Electronic"},
+      {"id":"cat_electronic","title":"💻 Electronic"}
+    ]
+  },
+  "menu_page2": {
+    "type": "buttons",
+    "text": "More categories:",
+    "buttons": [
       {"id":"cat_automation","title":"🤖 Automation"},
-      {"id":"btn_contact","title":"📞 Contact"}
+      {"id":"btn_contact","title":"📞 Contact"},
+      {"id":"btn_menu_back","title":"⬅ Back to First Menu"}
     ]
   },
   "categories": {
@@ -60,6 +67,7 @@
   },
   "buttons": {
     "btn_menu": "menu",
+    "btn_menu_back": "menu",
     "btn_contact": "📞 Contact us at +968 24592344 / 66 or email admin@dignityengineering.com"
   }
 }
