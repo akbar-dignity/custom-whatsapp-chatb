@@ -80,11 +80,10 @@ async function sendText(to, text) {
   );
 }
 
-// Send buttons helper (fully compliant)
+// Send buttons helper (max 3 buttons, multi-page)
 async function sendButtons(to, text, buttons) {
   if (!buttons || buttons.length === 0) return;
 
-  // WhatsApp supports max 3 buttons per message
   const btnArray = buttons.slice(0, 3).map(b => ({
     type: "reply",
     reply: { id: b.id, title: b.title }
@@ -105,25 +104,39 @@ async function sendButtons(to, text, buttons) {
   );
 }
 
-// Handle button logic
+// Handle button logic (multi-page aware)
 async function handleButton(from, buttonId) {
+  // Menu page 1 or 2
+  if (rules[buttonId]) {
+    const page = rules[buttonId];
+    if (page.type === "buttons") {
+      await sendButtons(from, page.text, page.buttons);
+      return;
+    }
+  }
+
   // Categories
   if (rules.categories && rules.categories[buttonId]) {
     const cat = rules.categories[buttonId];
     await sendButtons(from, cat.text, cat.buttons);
+    return;
   }
+
   // Products
-  else if (rules.products && rules.products[buttonId]) {
+  if (rules.products && rules.products[buttonId]) {
     await sendText(from, rules.products[buttonId]);
+    return;
   }
+
   // General buttons
-  else if (rules.buttons && rules.buttons[buttonId]) {
+  if (rules.buttons && rules.buttons[buttonId]) {
     const val = rules.buttons[buttonId];
     if (val === "menu") await sendButtons(from, rules.menu.text, rules.menu.buttons);
     else await sendText(from, val);
-  } else {
-    await sendText(from, "❌ Invalid selection.");
+    return;
   }
+
+  await sendText(from, "❌ Invalid selection.");
 }
 
 // Fetch conversation history
