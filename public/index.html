@@ -4,35 +4,102 @@
   <title>Chatbot Control Panel</title>
   <style>
     body { font-family: Arial; padding: 20px; background: #f9f9f9; }
-    textarea { width: 100%; height: 300px; }
-    button { padding: 10px 20px; margin-top: 10px; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: darkgreen; }
+    h1 { color: #333; }
+    #rules, #conversations { width: 100%; margin-bottom: 20px; }
+    input, button { padding: 8px; margin: 5px 0; }
+    .rule { display: flex; gap: 10px; margin-bottom: 5px; }
+    .conv { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
+    .user { color: blue; }
+    .bot { color: green; }
   </style>
 </head>
 <body>
   <h1>🤖 Chatbot Control Panel</h1>
-  <p>Edit your custom rules (User Message → Bot Reply):</p>
-  <textarea id="rules"></textarea><br>
+
+  <h2>Custom Rules</h2>
+  <div id="rules"></div>
+  <button onclick="addRule()">➕ Add Rule</button>
   <button onclick="saveRules()">💾 Save Rules</button>
 
+  <h2>Conversation History</h2>
+  <div id="conversations"></div>
+
   <script>
+    let rulesData = {};
+
     async function loadRules() {
       const res = await fetch('/rules.json');
-      const data = await res.json();
-      document.getElementById('rules').value = JSON.stringify(data, null, 2);
+      rulesData = await res.json();
+      renderRules();
+    }
+
+    function renderRules() {
+      const container = document.getElementById('rules');
+      container.innerHTML = '';
+      for (let key in rulesData) {
+        const div = document.createElement('div');
+        div.className = 'rule';
+        div.innerHTML = `
+          <input value="${key}" onchange="changeKey(this, '${key}')"/>
+          <input value="${rulesData[key]}" onchange="changeValue(this, '${key}')"/>
+          <button onclick="deleteRule('${key}')">🗑️</button>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function changeKey(input, oldKey) {
+      const value = rulesData[oldKey];
+      delete rulesData[oldKey];
+      rulesData[input.value] = value;
+      renderRules();
+    }
+
+    function changeValue(input, key) {
+      rulesData[key] = input.value;
+    }
+
+    function deleteRule(key) {
+      delete rulesData[key];
+      renderRules();
+    }
+
+    function addRule() {
+      rulesData['new rule'] = 'new reply';
+      renderRules();
     }
 
     async function saveRules() {
-      const rules = JSON.parse(document.getElementById('rules').value);
       await fetch('/update-rules', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rules)
+        body: JSON.stringify(rulesData)
       });
-      alert("✅ Rules updated!");
+      alert('✅ Rules saved!');
     }
 
+    async function loadConversations() {
+      const res = await fetch('/conversations');
+      const data = await res.json();
+      const container = document.getElementById('conversations');
+      container.innerHTML = '';
+      for (let user in data) {
+        const div = document.createElement('div');
+        div.className = 'conv';
+        div.innerHTML = `<strong>User ${user}</strong><br>`;
+        data[user].forEach(msg => {
+          const span = document.createElement('div');
+          span.className = msg.from;
+          span.textContent = `${msg.from.toUpperCase()}: ${msg.text}`;
+          div.appendChild(span);
+        });
+        container.appendChild(div);
+      }
+    }
+
+    setInterval(loadConversations, 3000); // refresh every 3s
     loadRules();
+    loadConversations();
   </script>
 </body>
 </html>
