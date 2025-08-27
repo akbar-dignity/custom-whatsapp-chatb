@@ -46,17 +46,17 @@
         {"id":"prod_plc","title":"PLC"},
         {"id":"btn_menu","title":"⬅ Back to Menu"}
       ]
+    },
+    "products": {
+      "prod_circuit": "Circuit Breaker: 10A, 220V. Price: OMR 3. Contact us to order.",
+      "prod_switch": "Industrial Switch: Single Pole, 5A. Price: OMR 1.5.",
+      "prod_bearing": "Ball Bearing 6205: Standard Size, Steel. Price: OMR 2.5.",
+      "prod_motor": "AC Motor 1HP, 3 Phase. Price: OMR 120.",
+      "prod_resistor": "Resistor 220 Ohm 1W. Price: OMR 0.1 each.",
+      "prod_ic": "IC 555 Timer, DIP-8. Price: OMR 0.5.",
+      "prod_sensor": "Proximity Sensor PNP, 12V. Price: OMR 10.",
+      "prod_plc": "PLC Controller Siemens S7-1200. Price: OMR 350."
     }
-  },
-  "products": {
-    "prod_circuit": "Circuit Breaker: 10A, 220V. Price: OMR 3. Contact us to order.",
-    "prod_switch": "Industrial Switch: Single Pole, 5A. Price: OMR 1.5.",
-    "prod_bearing": "Ball Bearing 6205: Standard Size, Steel. Price: OMR 2.5.",
-    "prod_motor": "AC Motor 1HP, 3 Phase. Price: OMR 120.",
-    "prod_resistor": "Resistor 220 Ohm 1W. Price: OMR 0.1 each.",
-    "prod_ic": "IC 555 Timer, DIP-8. Price: OMR 0.5.",
-    "prod_sensor": "Proximity Sensor PNP, 12V. Price: OMR 10.",
-    "prod_plc": "PLC Controller Siemens S7-1200. Price: OMR 350."
   },
   "buttons": {
     "btn_menu": "menu",
