@@ -12,26 +12,38 @@ const verifyToken = "Dignity@4321"; // WhatsApp Webhook Verify Token
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN; // Render Secret
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID; // Render Secret
 
-// Load rules from file
-let rules = JSON.parse(fs.readFileSync("./rules.json", "utf8"));
+// ✅ Load rules.json safely
+let rules = {};
+try {
+  rules = JSON.parse(fs.readFileSync("./rules.json", "utf8"));
+} catch (e) {
+  console.log("⚠️ No rules.json found, starting with empty rules");
+  rules = {};
+}
 
 // ✅ Webhook verification (for Meta)
-app.get("/", (req, res) => {
+app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
 
+  console.log("🔍 Verification request received:", req.query);
+
   if (mode === "subscribe" && token === verifyToken) {
+    console.log("✅ Webhook verified successfully!");
     res.status(200).send(challenge);
   } else {
+    console.log("❌ Verification failed. Token mismatch.");
     res.sendStatus(403);
   }
 });
 
 // ✅ Webhook messages from WhatsApp
-app.post("/", async (req, res) => {
+app.post("/webhook", async (req, res) => {
   try {
     const body = req.body;
+    console.log("📩 Incoming webhook body:", JSON.stringify(body, null, 2));
+
     if (body.object) {
       const entry = body.entry?.[0]?.changes?.[0]?.value;
       const message = entry?.messages?.[0];
@@ -59,6 +71,8 @@ app.post("/", async (req, res) => {
             }
           }
         );
+
+        console.log(`✅ Reply sent: "${botReply}"`);
       }
     }
     res.sendStatus(200);
@@ -71,8 +85,13 @@ app.post("/", async (req, res) => {
 // ✅ GUI - update rules
 app.post("/update-rules", (req, res) => {
   rules = req.body;
-  fs.writeFileSync(path.join(process.cwd(), "rules.json"), JSON.stringify(rules, null, 2));
+  fs.writeFileSync(
+    path.join(process.cwd(), "rules.json"),
+    JSON.stringify(rules, null, 2)
+  );
   res.json({ success: true, message: "Rules updated successfully" });
 });
 
-app.listen(port, () => console.log(`✅ Chatbot running on http://localhost:${port}`));
+app.listen(port, () =>
+  console.log(`✅ Chatbot running on http://localhost:${port}`)
+);
