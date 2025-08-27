@@ -1,7 +1,7 @@
 {
   "menu": {
     "type": "buttons",
-    "text": "Welcome to The All Dignity Engineering & Trading LLC! Please choose a category:",
+    "text": "Welcome to The All Dignity Engineering & Trading LLC! Choose a category (1/2):",
     "buttons": [
       {"id":"cat_electrical","title":"⚡ Electrical"},
       {"id":"cat_mechanical","title":"⚙ Mechanical"},
@@ -10,11 +10,11 @@
   },
   "menu_page2": {
     "type": "buttons",
-    "text": "More categories:",
+    "text": "🤖 More categories (2/2):",
     "buttons": [
       {"id":"cat_automation","title":"🤖 Automation"},
       {"id":"btn_contact","title":"📞 Contact"},
-      {"id":"btn_menu_back","title":"⬅ Back to First Menu"}
+      {"id":"btn_menu_back","title":"⬅ Back to Menu"}
     ]
   },
   "categories": {
