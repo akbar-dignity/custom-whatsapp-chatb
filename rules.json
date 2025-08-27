@@ -1,5 +1,17 @@
 {
-  "hi": "Hello! 👋 Welcome to Dignity Shop.",
-  "help": "Here are the options: 1️⃣ Products 2️⃣ Prices 3️⃣ Support",
-  "bye": "Goodbye! Have a great day 😊"
+  "menu": {
+    "type": "buttons",
+    "text": "Welcome! Choose an option:",
+    "buttons": [
+      { "id": "btn_products", "title": "🛒 Products" },
+      { "id": "btn_support", "title": "🛠 Support" },
+      { "id": "btn_contact", "title": "📞 Contact" }
+    ]
+  },
+  "hi": { "text": "Hello! Welcome to Dignity Shop!" },
+  "buttons": {
+    "btn_products": "Here are our products: Product A, Product B, Product C",
+    "btn_support": "Support options: FAQ, Live Chat, Email",
+    "btn_contact": "Contact us at: +968 12345678"
+  }
 }
