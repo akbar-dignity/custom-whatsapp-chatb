@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chatbot Control Panel</title>
+  <title>🤖 Dignity Shop Chatbot Panel</title>
   <style>
     body { font-family: Arial; padding: 20px; background: #f9f9f9; }
-    h1 { color: #333; }
-    #rules, #conversations { width: 100%; margin-bottom: 20px; }
-    input, button { padding: 8px; margin: 5px 0; }
-    .rule { display: flex; gap: 10px; margin-bottom: 5px; }
+    h1,h2 { color: #333; }
+    #rules, #buttons, #conversations { margin-bottom: 20px; }
+    input, button { padding: 6px; margin: 5px 0; }
+    .rule, .button-rule { display: flex; gap: 10px; margin-bottom: 5px; }
     .conv { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
     .user { color: blue; }
     .bot { color: green; }
@@ -16,10 +16,15 @@
 <body>
   <h1>🤖 Chatbot Control Panel</h1>
 
-  <h2>Custom Rules</h2>
+  <h2>Text Rules</h2>
   <div id="rules"></div>
-  <button onclick="addRule()">➕ Add Rule</button>
-  <button onclick="saveRules()">💾 Save Rules</button>
+  <button onclick="addTextRule()">➕ Add Text Rule</button>
+
+  <h2>Interactive Button Rules</h2>
+  <div id="buttons"></div>
+  <button onclick="addButtonRule()">➕ Add Button Rule</button>
+
+  <button onclick="saveRules()">💾 Save All Rules</button>
 
   <h2>Conversation History</h2>
   <div id="conversations"></div>
@@ -27,48 +32,95 @@
   <script>
     let rulesData = {};
 
+    // Load rules.json
     async function loadRules() {
       const res = await fetch('/rules.json');
       rulesData = await res.json();
-      renderRules();
+      renderTextRules();
+      renderButtonRules();
     }
 
-    function renderRules() {
+    // Render Text Rules
+    function renderTextRules() {
       const container = document.getElementById('rules');
       container.innerHTML = '';
       for (let key in rulesData) {
+        if (key === 'buttons') continue; // skip button section
+        const value = rulesData[key].text || rulesData[key];
         const div = document.createElement('div');
         div.className = 'rule';
         div.innerHTML = `
-          <input value="${key}" onchange="changeKey(this, '${key}')"/>
-          <input value="${rulesData[key]}" onchange="changeValue(this, '${key}')"/>
-          <button onclick="deleteRule('${key}')">🗑️</button>
+          <input value="${key}" onchange="changeTextKey(this, '${key}')"/>
+          <input value="${value}" onchange="changeTextValue(this, '${key}')"/>
+          <button onclick="deleteTextRule('${key}')">🗑️</button>
         `;
         container.appendChild(div);
       }
     }
 
-    function changeKey(input, oldKey) {
+    function changeTextKey(input, oldKey) {
       const value = rulesData[oldKey];
       delete rulesData[oldKey];
       rulesData[input.value] = value;
-      renderRules();
+      renderTextRules();
     }
 
-    function changeValue(input, key) {
-      rulesData[key] = input.value;
+    function changeTextValue(input, key) {
+      if (typeof rulesData[key] === 'object') rulesData[key].text = input.value;
+      else rulesData[key] = input.value;
     }
 
-    function deleteRule(key) {
+    function deleteTextRule(key) {
       delete rulesData[key];
-      renderRules();
+      renderTextRules();
     }
 
-    function addRule() {
-      rulesData['new rule'] = 'new reply';
-      renderRules();
+    function addTextRule() {
+      rulesData['new_rule'] = 'new reply';
+      renderTextRules();
     }
 
+    // Render Button Rules
+    function renderButtonRules() {
+      const container = document.getElementById('buttons');
+      container.innerHTML = '';
+      if (!rulesData.buttons) rulesData.buttons = {};
+
+      for (let id in rulesData.buttons) {
+        const value = rulesData.buttons[id];
+        const div = document.createElement('div');
+        div.className = 'button-rule';
+        div.innerHTML = `
+          <input value="${id}" onchange="changeButtonId(this, '${id}')"/>
+          <input value="${value}" onchange="changeButtonValue(this, '${id}')"/>
+          <button onclick="deleteButtonRule('${id}')">🗑️</button>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function changeButtonId(input, oldId) {
+      const value = rulesData.buttons[oldId];
+      delete rulesData.buttons[oldId];
+      rulesData.buttons[input.value] = value;
+      renderButtonRules();
+    }
+
+    function changeButtonValue(input, id) {
+      rulesData.buttons[id] = input.value;
+    }
+
+    function deleteButtonRule(id) {
+      delete rulesData.buttons[id];
+      renderButtonRules();
+    }
+
+    function addButtonRule() {
+      rulesData.buttons['new_button'] = 'reply text';
+      renderButtonRules();
+    }
+
+    // Save all rules
     async function saveRules() {
       await fetch('/update-rules', {
         method: 'POST',
@@ -76,8 +128,10 @@
         body: JSON.stringify(rulesData)
       });
       alert('✅ Rules saved!');
+      loadRules();
     }
 
+    // Load conversation history
     async function loadConversations() {
       const res = await fetch('/conversations');
       const data = await res.json();
@@ -98,6 +152,7 @@
     }
 
     setInterval(loadConversations, 3000); // refresh every 3s
+
     loadRules();
     loadConversations();
   </script>
