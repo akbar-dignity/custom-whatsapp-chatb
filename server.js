@@ -8,45 +8,35 @@ app.use(express.json());
 app.use(express.static("public"));
 
 const port = process.env.PORT || 3000;
-const verifyToken = "Dignity@4321"; // WhatsApp Webhook Verify Token
-const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN; // Render Secret
-const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID; // Render Secret
+const verifyToken = "Dignity@4321";
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 
-// 🔹 Load rules.json safely
+// Load rules.json
 let rules = {};
 try {
   rules = JSON.parse(fs.readFileSync("./rules.json", "utf8"));
 } catch (e) {
-  console.log("⚠️ No rules.json found, starting with empty rules");
+  console.log("⚠️ No rules.json found, starting empty.");
   rules = {};
 }
 
-// 🔹 Store conversation history per user
-let conversations = {}; // { "user_number": [ {from:"user"/"bot", text:""} ] }
+// Conversation history
+let conversations = {};
 
-// ✅ Webhook verification
+// Webhook verification
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
-
-  console.log("🔍 Meta verification request:", req.query);
-
-  if (mode === "subscribe" && token === verifyToken) {
-    console.log("✅ Webhook verified successfully!");
-    res.status(200).send(challenge);
-  } else {
-    console.log("❌ Verification failed. Token mismatch. Received:", token);
-    res.sendStatus(403);
-  }
+  if (mode === "subscribe" && token === verifyToken) res.status(200).send(challenge);
+  else res.sendStatus(403);
 });
 
-// ✅ Webhook message handler
+// Webhook messages
 app.post("/webhook", async (req, res) => {
   try {
     const body = req.body;
-    console.log("📩 Incoming webhook body:", JSON.stringify(body, null, 2));
-
     if (!body.object) return res.sendStatus(200);
 
     const entry = body.entry?.[0]?.changes?.[0]?.value;
@@ -55,110 +45,18 @@ app.post("/webhook", async (req, res) => {
 
     const from = message.from;
     const userText = (message.text?.body || "").trim();
-
     if (!conversations[from]) conversations[from] = [];
     if (userText) conversations[from].push({ from: "user", text: userText });
 
-    // Check if this is a button reply
-    let buttonReplyId =
+    const buttonReplyId =
       message?.button?.payload ||
       (message?.interactive?.type === "button_reply" ? message.interactive.button_reply.id : null);
 
-    let botReply = "";
-
     if (buttonReplyId) {
-      // Respond based on button ID
-      if (rules.buttons && rules.buttons[buttonReplyId]) {
-        botReply = rules.buttons[buttonReplyId];
-      } else {
-        botReply = "✅ Button clicked: " + buttonReplyId;
-      }
-
-      conversations[from].push({ from: "bot", text: botReply });
-
-      await axios.post(
-        `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
-        {
-          messaging_product: "whatsapp",
-          to: from,
-          text: { body: botReply }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-            "Content-Type": "application/json"
-          }
-        }
-      );
+      await handleButton(from, buttonReplyId);
     } else {
-      // Normal text message
-      const rule = rules[userText.toLowerCase()];
-
-      if (rule) {
-        if (rule.type === "buttons") {
-          // Send interactive buttons
-          const buttons = rule.buttons.map(b => ({ type: "reply", reply: { id: b.id, title: b.title } }));
-
-          await axios.post(
-            `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
-            {
-              messaging_product: "whatsapp",
-              to: from,
-              type: "interactive",
-              interactive: {
-                type: "button",
-                body: { text: rule.text || "Please choose an option:" },
-                action: { buttons }
-              }
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-                "Content-Type": "application/json"
-              }
-            }
-          );
-
-          conversations[from].push({ from: "bot", text: "Buttons sent" });
-        } else {
-          // Normal text reply
-          botReply = rule.text || rule;
-          conversations[from].push({ from: "bot", text: botReply });
-
-          await axios.post(
-            `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
-            {
-              messaging_product: "whatsapp",
-              to: from,
-              text: { body: botReply }
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-                "Content-Type": "application/json"
-              }
-            }
-          );
-        }
-      } else {
-        botReply = "❌ Sorry, I didn’t understand that. Type 'menu' to see options.";
-        conversations[from].push({ from: "bot", text: botReply });
-
-        await axios.post(
-          `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
-          {
-            messaging_product: "whatsapp",
-            to: from,
-            text: { body: botReply }
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-              "Content-Type": "application/json"
-            }
-          }
-        );
-      }
+      if (userText.toLowerCase() === "menu") await sendButtons(from, rules.menu.text, rules.menu.buttons);
+      else await sendText(from, "❌ I didn’t understand that. Type 'menu' to see options.");
     }
 
     res.sendStatus(200);
@@ -168,12 +66,56 @@ app.post("/webhook", async (req, res) => {
   }
 });
 
-// ✅ Endpoint to fetch conversation history
-app.get("/conversations", (req, res) => {
-  res.json(conversations);
-});
+// Send text helper
+async function sendText(to, text) {
+  conversations[to].push({ from: "bot", text });
+  await axios.post(
+    `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
+    { messaging_product: "whatsapp", to, text: { body: text } },
+    { headers: { Authorization: `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" } }
+  );
+}
 
-// ✅ GUI - update rules
+// Send buttons helper
+async function sendButtons(to, text, buttons) {
+  conversations[to].push({ from: "bot", text });
+  await axios.post(
+    `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
+    {
+      messaging_product: "whatsapp",
+      to,
+      type: "interactive",
+      interactive: { type: "button", body: { text }, action: { buttons } }
+    },
+    { headers: { Authorization: `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" } }
+  );
+}
+
+// Handle button logic
+async function handleButton(from, buttonId) {
+  // Categories
+  if (rules.categories && rules.categories[buttonId]) {
+    const cat = rules.categories[buttonId];
+    await sendButtons(from, cat.text, cat.buttons);
+  }
+  // Products
+  else if (rules.products && rules.products[buttonId]) {
+    await sendText(from, rules.products[buttonId]);
+  }
+  // General buttons
+  else if (rules.buttons && rules.buttons[buttonId]) {
+    const val = rules.buttons[buttonId];
+    if (val === "menu") await sendButtons(from, rules.menu.text, rules.menu.buttons);
+    else await sendText(from, val);
+  } else {
+    await sendText(from, "❌ Invalid selection.");
+  }
+}
+
+// Fetch conversation history
+app.get("/conversations", (req, res) => res.json(conversations));
+
+// Update rules via GUI
 app.post("/update-rules", (req, res) => {
   rules = req.body;
   fs.writeFileSync(path.join(process.cwd(), "rules.json"), JSON.stringify(rules, null, 2));
