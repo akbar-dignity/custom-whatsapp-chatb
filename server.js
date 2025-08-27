@@ -95,3 +95,7 @@ app.post("/update-rules", (req, res) => {
 app.listen(port, () =>
   console.log(`✅ Chatbot running on http://localhost:${port}`)
 );
+
+app.get("/test", (req, res) => {
+  res.send("✅ Server is live!");
+});
