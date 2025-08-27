@@ -45,6 +45,7 @@ app.post("/webhook", async (req, res) => {
 
     const from = message.from;
     const userText = (message.text?.body || "").trim();
+
     if (!conversations[from]) conversations[from] = [];
     if (userText) conversations[from].push({ from: "user", text: userText });
 
@@ -55,13 +56,16 @@ app.post("/webhook", async (req, res) => {
     if (buttonReplyId) {
       await handleButton(from, buttonReplyId);
     } else {
-      if (userText.toLowerCase() === "menu") await sendButtons(from, rules.menu.text, rules.menu.buttons);
-      else await sendText(from, "❌ I didn’t understand that. Type 'menu' to see options.");
+      if (userText.toLowerCase() === "menu") {
+        await sendButtons(from, rules.menu.text, rules.menu.buttons);
+      } else {
+        await sendText(from, "❌ I didn’t understand that. Type 'menu' to see options.");
+      }
     }
 
     res.sendStatus(200);
   } catch (err) {
-    console.error("❌ Error:", err.message);
+    console.error("❌ Error:", err.response?.data || err.message);
     res.sendStatus(500);
   }
 });
@@ -76,17 +80,27 @@ async function sendText(to, text) {
   );
 }
 
-// Send buttons helper
+// Send buttons helper (fully compliant)
 async function sendButtons(to, text, buttons) {
+  if (!buttons || buttons.length === 0) return;
+
+  // WhatsApp supports max 3 buttons per message
+  const btnArray = buttons.slice(0, 3).map(b => ({
+    type: "reply",
+    reply: { id: b.id, title: b.title }
+  }));
+
+  const payload = {
+    messaging_product: "whatsapp",
+    to,
+    type: "interactive",
+    interactive: { type: "button", body: { text }, action: { buttons: btnArray } }
+  };
+
   conversations[to].push({ from: "bot", text });
   await axios.post(
     `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
-    {
-      messaging_product: "whatsapp",
-      to,
-      type: "interactive",
-      interactive: { type: "button", body: { text }, action: { buttons } }
-    },
+    payload,
     { headers: { Authorization: `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" } }
   );
 }
