@@ -1,73 +1,117 @@
 {
   "menu": {
-    "type": "buttons",
-    "text": "Welcome to The All Dignity Engineering & Trading LLC! Choose a category (1/2):",
+    "text": "👋 Welcome to Dignity Shop!\nPlease choose a category:",
     "buttons": [
-      {"id":"cat_electrical","title":"⚡ Electrical"},
-      {"id":"cat_mechanical","title":"⚙ Mechanical"},
-      {"id":"cat_electronic","title":"💻 Electronic"}
+      { "id": "cat_automation", "title": "⚙️ Industrial Automation" },
+      { "id": "cat_electrical", "title": "🔌 Electrical Parts" },
+      { "id": "menu_page2", "title": "➡️ More Categories" }
     ]
   },
   "menu_page2": {
-    "type": "buttons",
-    "text": "🤖 More categories (2/2):",
+    "text": "📦 More Categories:",
     "buttons": [
-      {"id":"cat_automation","title":"🤖 Automation"},
-      {"id":"btn_contact","title":"📞 Contact"},
-      {"id":"btn_menu_back","title":"⬅ Back to Menu"}
+      { "id": "cat_electronics", "title": "🔧 Electronic Components" },
+      { "id": "cat_mechanical", "title": "⚒️ Mechanical Parts" },
+      { "id": "contact", "title": "📞 Contact Us" }
     ]
   },
+
   "categories": {
-    "cat_electrical": {
-      "type": "buttons",
-      "text": "Electrical Products:",
-      "buttons": [
-        {"id":"prod_circuit","title":"Circuit Breaker"},
-        {"id":"prod_switch","title":"Switch"},
-        {"id":"btn_menu","title":"⬅ Back to Menu"}
-      ]
-    },
-    "cat_mechanical": {
-      "type": "buttons",
-      "text": "Mechanical Products:",
-      "buttons": [
-        {"id":"prod_bearing","title":"Bearing"},
-        {"id":"prod_motor","title":"Motor"},
-        {"id":"btn_menu","title":"⬅ Back to Menu"}
-      ]
-    },
-    "cat_electronic": {
-      "type": "buttons",
-      "text": "Electronic Products:",
-      "buttons": [
-        {"id":"prod_resistor","title":"Resistor"},
-        {"id":"prod_ic","title":"IC"},
-        {"id":"btn_menu","title":"⬅ Back to Menu"}
-      ]
-    },
     "cat_automation": {
-      "type": "buttons",
-      "text": "Automation Products:",
+      "text": "⚙️ Industrial Automation - choose a product:",
       "buttons": [
-        {"id":"prod_sensor","title":"Sensor"},
-        {"id":"prod_plc","title":"PLC"},
-        {"id":"btn_menu","title":"⬅ Back to Menu"}
+        { "id": "p_plc", "title": "PLC Controllers" },
+        { "id": "p_sensors", "title": "Sensors" },
+        { "id": "cat_automation_page2", "title": "➡️ More" }
+      ]
+    },
+    "cat_automation_page2": {
+      "text": "⚙️ Industrial Automation - more products:",
+      "buttons": [
+        { "id": "p_drives", "title": "VFD Drives" },
+        { "id": "p_relays", "title": "Relays" },
+        { "id": "cat_automation", "title": "⬅️ Back" }
+      ]
+    },
+
+    "cat_electrical": {
+      "text": "🔌 Electrical Parts - choose a product:",
+      "buttons": [
+        { "id": "p_cables", "title": "Cables" },
+        { "id": "p_breakers", "title": "Circuit Breakers" },
+        { "id": "cat_electrical_page2", "title": "➡️ More" }
+      ]
+    },
+    "cat_electrical_page2": {
+      "text": "🔌 Electrical Parts - more products:",
+      "buttons": [
+        { "id": "p_switches", "title": "Switches" },
+        { "id": "p_panels", "title": "Panels" },
+        { "id": "cat_electrical", "title": "⬅️ Back" }
+      ]
+    },
+
+    "cat_electronics": {
+      "text": "🔧 Electronic Components - choose a product:",
+      "buttons": [
+        { "id": "p_ic", "title": "ICs" },
+        { "id": "p_resistors", "title": "Resistors" },
+        { "id": "cat_electronics_page2", "title": "➡️ More" }
+      ]
+    },
+    "cat_electronics_page2": {
+      "text": "🔧 Electronic Components - more products:",
+      "buttons": [
+        { "id": "p_capacitors", "title": "Capacitors" },
+        { "id": "p_transistors", "title": "Transistors" },
+        { "id": "cat_electronics", "title": "⬅️ Back" }
+      ]
+    },
+
+    "cat_mechanical": {
+      "text": "⚒️ Mechanical Parts - choose a product:",
+      "buttons": [
+        { "id": "p_bearings", "title": "Bearings" },
+        { "id": "p_gears", "title": "Gears" },
+        { "id": "cat_mechanical_page2", "title": "➡️ More" }
+      ]
+    },
+    "cat_mechanical_page2": {
+      "text": "⚒️ Mechanical Parts - more products:",
+      "buttons": [
+        { "id": "p_couplings", "title": "Couplings" },
+        { "id": "p_chains", "title": "Chains" },
+        { "id": "cat_mechanical", "title": "⬅️ Back" }
       ]
     }
   },
+
   "products": {
-    "prod_circuit": "Circuit Breaker: 10A, 220V. Price: OMR 3. Contact us to order.",
-    "prod_switch": "Industrial Switch: Single Pole, 5A. Price: OMR 1.5.",
-    "prod_bearing": "Ball Bearing 6205: Standard Size, Steel. Price: OMR 2.5.",
-    "prod_motor": "AC Motor 1HP, 3 Phase. Price: OMR 120.",
-    "prod_resistor": "Resistor 220 Ohm 1W. Price: OMR 0.1 each.",
-    "prod_ic": "IC 555 Timer, DIP-8. Price: OMR 0.5.",
-    "prod_sensor": "Proximity Sensor PNP, 12V. Price: OMR 10.",
-    "prod_plc": "PLC Controller Siemens S7-1200. Price: OMR 350."
+    "p_plc": "📦 *PLC Controllers* available. Brands: Siemens, Omron, Mitsubishi.",
+    "p_sensors": "📦 *Sensors* available. Types: Proximity, Photoelectric, Temperature.",
+    "p_drives": "📦 *Variable Frequency Drives (VFDs)* available for motor control.",
+    "p_relays": "📦 *Relays* available: Solid-state, Electromechanical.",
+    
+    "p_cables": "📦 *Cables* in stock. Types: Power, Control, Signal.",
+    "p_breakers": "📦 *Circuit Breakers* available. Brands: ABB, Schneider, Siemens.",
+    "p_switches": "📦 *Switches* available: Push button, Limit, Selector.",
+    "p_panels": "📦 *Electrical Panels* - Distribution & Control panels.",
+    
+    "p_ic": "📦 *Integrated Circuits (ICs)*: Microcontrollers, Logic ICs, Amplifiers.",
+    "p_resistors": "📦 *Resistors* in all ranges and wattages.",
+    "p_capacitors": "📦 *Capacitors* - Electrolytic, Ceramic, Film types.",
+    "p_transistors": "📦 *Transistors* - Power, Signal, MOSFETs, BJTs.",
+    
+    "p_bearings": "📦 *Bearings* available. Brands: SKF, FAG, NSK.",
+    "p_gears": "📦 *Gears* for industrial use, multiple sizes available.",
+    "p_couplings": "📦 *Couplings* - Flexible, Rigid, Gear couplings.",
+    "p_chains": "📦 *Chains* - Roller, Conveyor, Transmission chains."
   },
-  "buttons": {
-    "btn_menu": "menu",
-    "btn_menu_back": "menu",
-    "btn_contact": "📞 Contact us at +968 24592344 / 66 or email admin@dignityengineering.com"
+
+  "contact": {
+    "text": "📞 Contact Dignity Engineering:\n\n📱 Phone: +968 24592344 / 66\n📧 Email: admin@dignityengineering.com",
+    "buttons": [
+      { "id": "menu", "title": "⬅️ Back to Menu" }
+    ]
   }
 }
